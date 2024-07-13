@@ -21,7 +21,7 @@ def LDA(matrix: np.array, L: np.array, classes, dimensions, orthogonal=False):
         UW, _, _ = np.linalg.svd(W)
         W = UW[:, 0:dimensions]
     
-    return W.T @ matrix
+    return W, W.T @ matrix
 
 
 # S_b Separation BETWEEN classes 

@@ -19,4 +19,4 @@ def PCA(matrix: np.array, dimensions: int):
     y_PCA = P.T @ DM
     # x_PCA = P @ y_PCA # projection over initial (full) space
 
-    return y_PCA
+    return P, y_PCA
