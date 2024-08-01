@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.linalg
+from .data_management import vcol, vrow
 
 
 def LDA(matrix: np.array, L: np.array, classes, dimensions, orthogonal=False):
@@ -11,8 +12,7 @@ def LDA(matrix: np.array, L: np.array, classes, dimensions, orthogonal=False):
         print("dimensions parameter provided is too small")
         return
     
-    SB = __SB(matrix, L, classes)
-    SW = __SW(matrix, L, classes)
+    SB, SW = compute_Sb_Sw(matrix, L)
     
     _, U = scipy.linalg.eigh(SB, SW)
     W = U[:, ::-1][:, 0:dimensions]
@@ -23,29 +23,20 @@ def LDA(matrix: np.array, L: np.array, classes, dimensions, orthogonal=False):
     
     return W, W.T @ matrix
 
-
 # S_b Separation BETWEEN classes 
-def __SB(matrix, L, classes):
-
-    mu = matrix.mean(axis=1).reshape(matrix.shape[0], 1)
-    
-    SB = np.zeros((matrix.shape[0], matrix.shape[0]))
-    
-    for i in classes:
-        Dc = matrix[:, L == i]
-        muc = Dc.mean(axis=1).reshape(Dc.shape[0], 1)
-        SB = SB + ((muc - mu) @ (muc - mu).T) * Dc.shape[1]
-    SB = SB / matrix.shape[1]
-    return SB
-
-
 # S_w Separation WITHIN classes
-def __SW(matrix, L, classes):
-    SW = np.zeros((matrix.shape[0], matrix.shape[0]))
-    for i in classes:
-        Dc = matrix[:, L == i]
-        muc = Dc.mean(axis=1).reshape(Dc.shape[0], 1)
-        Cc = (Dc - muc) @ (Dc - muc).T
-        SW += Cc
-    SW /= matrix.shape[1]
-    return SW
+def compute_Sb_Sw(D, L):
+    Sb = 0
+    Sw = 0
+    muGlobal = vcol(D.mean(1))
+    for i in np.unique(L):
+        DCls = D[:, L == i]
+        mu = vcol(DCls.mean(1))
+        Sb += (mu - muGlobal) @ (mu - muGlobal).T * DCls.shape[1]
+        Sw += (DCls - mu) @ (DCls - mu).T
+
+    # Sb, Sw
+    return Sb / D.shape[1], Sw / D.shape[1]
+
+def apply_lda(U, D):
+    return U.T @ D

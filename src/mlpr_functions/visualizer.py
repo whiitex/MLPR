@@ -12,7 +12,7 @@ def visualize_pairwise(matrix: np.array, label: np.array, classes: list, class_n
         plt.figure()
         for cls in range(len(classes)):
              plt.hist(matrix[0, label==classes[cls]], density=1, bins=10, label=class_names[cls], alpha=0.65)
-        plt.show()
+        # plt.savefig('img/LDA_1.pdf', format='pdf')
         return
     
     fig, axs = plt.subplots(n, n, figsize=(20,16))
@@ -31,3 +31,4 @@ def visualize_pairwise(matrix: np.array, label: np.array, classes: list, class_n
 
     fig.tight_layout(pad=15/n)
     plt.show()
+    # plt.savefig('latex/images/pairwise_visualization.pdf', format='pdf')

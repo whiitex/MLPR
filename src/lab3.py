@@ -32,18 +32,24 @@ def main():
     ####################################
     # PCA - Principal Component Analysis
 
-    y_PCA = PCA(D, 2)
+    PPCA, y_PCA = PCA(D, 4)
+    check = np.load('./data_et_checks/data3/IRIS_PCA_matrix_m4.npy')
+    print(np.allclose(PPCA, check))
+    
     # x_PCA = P @ y_PCA # it isnt important
-
     visualize_pairwise(y_PCA, L, [0,1,2], classes)
+    
 
 
 
     ####################################
     # LDA - Linear Discriminant Analysis
 
-    y_LDA = LDA(y_PCA, L, [0,1], 2)
-    visualize_pairwise(y_LDA, L, [0,1,2], classes)
+    PLDA, y_LDA = LDA(y_PCA, L, [0,1], 2)
+
+    check = np.load('./data_et_checks/data3/IRIS_LDA_matrix_m2.npy')
+    print(np.allclose(PLDA, check))
+    visualize_pairwise(y_LDA, L, [0,1,2], classes, bins=12)
 
 
 if __name__ == '__main__':

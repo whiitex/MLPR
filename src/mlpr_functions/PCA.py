@@ -1,22 +1,22 @@
 import numpy as np
+from .data_management import compute_mu_C
 
-def PCA(matrix: np.array, dimensions: int):
+def PCA(matrix: np.array, dim: int):
 
-    if dimensions > matrix.shape[0]:
+    if dim > matrix.shape[0]:
         print("dimensions parameter provided is too large")
         return
-    elif dimensions < 1:
+    elif dim < 1:
         print("dimensions parameter provided is too small")
         return
     
-    mu = matrix.mean(axis=1).reshape(matrix.shape[0], 1)
-    DM = matrix - mu
-
-    C = DM @ DM.T / DM.shape[1]
+    _, C = compute_mu_C(matrix)
     U, _, _ = np.linalg.svd(C)
 
-    P = U[:, 0:dimensions]
-    y_PCA = P.T @ DM
+    P = U[:, 0:dim]
     # x_PCA = P @ y_PCA # projection over initial (full) space
 
-    return P, y_PCA
+    return P, P.T @ matrix
+
+def apply_pca(P, D):
+    return P.T @ D

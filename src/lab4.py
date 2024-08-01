@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from mlpr_functions.logpdf_GAU_ND import logpdf_GAU_ND, loglikelihood
+from mlpr_functions.data_management import vcol, vrow
 
 
 def main():
@@ -17,8 +18,8 @@ def main():
 
     # check
     pdfSol = np.load('data_et_checks/data4/llGAU.npy')
-    pdfGau = logpdf_GAU_ND(XPlot.reshape(1,1000), m, C)
-    print(np.abs(pdfSol - pdfGau).max())
+    pdfGau = logpdf_GAU_ND(vrow(XPlot), m, C)
+    print(np.allclose(pdfSol, pdfGau))
 
     XND = np.load('data_et_checks/data4/XND.npy')
     mu = np.load('data_et_checks/data4/muND.npy')
@@ -52,7 +53,7 @@ def main():
     c_ML = (data - m_ML) @ (data - m_ML).T / data.shape[1]
     plt.plot(XPlot.ravel(), np.exp(logpdf_GAU_ND(XPlot, m_ML, c_ML)))
     print(loglikelihood(data, m_ML, c_ML))
-    # plt.show()    
+    plt.show()    
 
 
 if __name__ == '__main__':

@@ -8,14 +8,15 @@ def logpdf_GAU_ND(X: np.array, mu: np.array, C: np.array):
     const = -M/2 * np.log(2 * np.pi)
     const -= C_det / 2
     
-    ans = np.zeros(X.shape[1])
-    for i in range(X.shape[1]):
-        row = X[:,i].reshape(M,1)
-        logdensity = -(row - mu).T @ C_inv @ (row - mu)/2 + const
+    # ans = np.zeros(X.shape[1])
+    # for i in range(X.shape[1]):
+    #     row = X[:,i].reshape(M,1)
+    #     logdensity = -(row - mu).T @ C_inv @ (row - mu)/2 + const
         
-        ans[i] = logdensity
+    #     ans[i] = logdensity
 
-    return ans
+    # return ans
+    return -M/2 * np.log(np.pi*2) - 0.5*C_det - 0.5 * ((X-mu) * (C_inv @ (X-mu))).sum(0)
 
 
 def likelihood(X, m, C):

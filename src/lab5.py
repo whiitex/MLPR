@@ -50,7 +50,7 @@ def main():
     SJoint = S / 3
 
     # check
-    # check = np.load('data5/SJoint_MVG.npy')
+    # check = np.load('data_et_checks/data5/SJoint_MVG.npy')
     # print(np.allclose(check, SJoint))
 
 
@@ -131,7 +131,7 @@ def main():
 
     logSPost_naive = logSJoint_naive - logSMarginal_naive
 
-    # check = np.load('data5/logPosterior_NaiveBayes.npy')
+    # check = np.load('data_et_checks/data5/logPosterior_NaiveBayes.npy')
     # print(np.allclose(check, logSPost_naive))
 
     logPred_naive = np.argmax(logSPost_naive, axis=0)

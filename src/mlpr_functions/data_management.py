@@ -27,3 +27,14 @@ def split_db_2to1(D, L, seed=0):
     LTR = L[idxTrain]
     LTE = L[idxTest]
     return (DTR, LTR), (DTE, LTE)
+
+def vcol(x: np.array):
+    return x.reshape((x.size, 1))
+
+def vrow(x: np.array):
+    return x.reshape((1, x.size))
+
+def compute_mu_C(D):
+    mu = vcol(D.mean(1))
+    C = ((D-mu) @ (D-mu).T) / float(D.shape[1])
+    return mu, C
