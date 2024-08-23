@@ -6,6 +6,7 @@ from src.mlpr_functions.PCA import *
 from src.mlpr_functions.LDA import *
 from src.mlpr_functions.logpdf_GAU_ND import *
 from src.mlpr_functions.MVG import *
+from src.mlpr_functions.LogisticRegression import *
 
 
 def main(m_PCA, m_LDA, applyPCA, applyLDA):
@@ -28,7 +29,6 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
     #     axs[j].scatter(DTR[2*j, LTR==0], DTR[2*j+1, LTR==0], label=classes[0], marker='.', alpha=0.24)
     #     axs[j].scatter(DTR[2*j, LTR==1], DTR[2*j+1, LTR==1], label=classes[1], marker='.', alpha=0.24)
 
-
     #     axs[j].set_title(f"Feature {2*j+1} x Feature {2*(j+1)}", fontsize=12)
     #     axs[j].legend(fontsize=10)
 
@@ -38,7 +38,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
 
 
     # m_PCA = 6 # 4/5 should be good
-    print(f"m_PCA: {m_PCA}")
+    print(f"m_PCA: {m_PCA}, applyPCA: {applyPCA}")
     P_PCA, DTR_PCA = PCA(DTR, m_PCA)
     DTE_PCA = P_PCA.T @ DTE
 
@@ -66,7 +66,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
     # LDA - Linear Discriminant Analysis
     
     # m_LDA = 3
-    print(f"m_LDA: {m_LDA}\n")
+    print(f"m_LDA: {m_LDA}, applyLDA: {applyLDA}\n")
     W, DTR_LDA = LDA(DTR, LTR, [0,1], min(m_PCA, m_LDA), True)
     DTE_LDA = W.T @ DTE
 
@@ -191,6 +191,15 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
 
     binaryMVG("accuracyMVG_56", DTR[4:], LTR, DTE[4:], LTE, classes)
     binaryMVGTied("accuracyMVG_Tied_56", DTR[4:], LTR, DTE[4:], LTE, classes)
+
+
+    ########################################################################################################################
+    # Logistic Regression
+
+    w, b = trainLogRegBinary(DTR, LTR, 0.001)
+
+
+
 
 
 ########################################################################################################################
