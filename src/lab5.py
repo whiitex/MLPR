@@ -25,7 +25,7 @@ def load_iris(path: str):
 
 def main():
     classes = [0,1,2]
-    D, L = load_iris('src/iris.csv')
+    D, L = load_iris('iris.csv')
     (DTR, LTR), (DTE, LTE) = split_db_2to1(D, L)
 
     mu = []
@@ -100,7 +100,11 @@ def main():
     # print(f"Correct rate: {logcorrect_num / len(logPred) * 100}%")
     # print(f"Error rate: {logerror_num / len(LTE) * 100}%")
 
+    ConfMatrixMVG = np.zeros((len(classes), len(classes)))
+    for i in range(DTE.shape[1]):
+        ConfMatrixMVG[logPred[i], LTE[i]] += 1
 
+    # print(ConfMatrixMVG)
 
     #########################################################################
     # Naive Bayes
@@ -178,6 +182,12 @@ def main():
 
     # print(f"Correct rate: {logcorrect_num_common / len(logPred_naive) * 100}%") # 98.0%
     # print(f"Error rate: {logerror_num_common / len(LTE) * 100}%") # 2.0%
+
+    ConfMatrixMVGTied = np.zeros((len(classes), len(classes)))
+    for i in range(DTE.shape[1]):
+        ConfMatrixMVGTied[logPred_common[i], LTE[i]] += 1
+
+    # print(ConfMatrixMVGTied)
 
 
 
