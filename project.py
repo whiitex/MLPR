@@ -8,6 +8,7 @@ from src.mlpr_functions.logpdf_GAU_ND import *
 from src.mlpr_functions.MVG import *
 from src.mlpr_functions.BayesRisk import *
 from src.mlpr_functions.LogisticRegression import *
+from src.mlpr_functions.SVM import *
 
 
 def main(m_PCA, m_LDA, applyPCA, applyLDA):
@@ -326,25 +327,25 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
     mu, _ = compute_mu_C(DTR)
     # DTR, DTE = DTR - mu, DTE - mu # centering
     pT, Cfn, Cfp = 0.1, 1, 1
-    x, ydcf, ymindcf = [], [], []
-    lamd = 0
-    minErrLogReg = None
-    for l in np.logspace(-5, 3, 100):
-    # for l in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000]:
-        w, b = trainQuadraticLogRegBinary(DTR, LTR, l)
-        phi_DTE = phi_x(DTE)
-        sVal = w.T @ phi_DTE + b
-        pEmp = (LTR == 1).sum() / LTR.size
-        sValLlr = sVal - np.log(pEmp / (1-pEmp))
-        RES = (sVal > 0) * 1
-        accuracyLogReg = np.mean(RES == LTE)
-        errorLogReg = 1 - accuracyLogReg
-        if minErrLogReg is None or errorLogReg < minErrLogReg:
-            minErrLogReg = errorLogReg
-            lamd = l
-        pred_lab = predict_optimal_Bayes_risk(sValLlr, pT, Cfn, Cfp)
-        _, dcf = compute_bayes_risk_binary(pred_lab, LTE, pT, Cfn, Cfp)
-        mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
+    lamd = 2e-2
+    # x, ydcf, ymindcf = [], [], []
+    # minErrLogReg = None
+    # for l in np.logspace(-5, 3, 100):
+    # # for l in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000]:
+    #     w, b = trainQuadraticLogRegBinary(DTR, LTR, l)
+    #     phi_DTE = phi_x(DTE)
+    #     sVal = w.T @ phi_DTE + b
+    #     pEmp = (LTR == 1).sum() / LTR.size
+    #     sValLlr = sVal - np.log(pEmp / (1-pEmp))
+    #     RES = (sVal > 0) * 1
+    #     accuracyLogReg = np.mean(RES == LTE)
+    #     errorLogReg = 1 - accuracyLogReg
+    #     if minErrLogReg is None or errorLogReg < minErrLogReg:
+    #         minErrLogReg = errorLogReg
+    #         lamd = l
+    #     pred_lab = predict_optimal_Bayes_risk(sValLlr, pT, Cfn, Cfp)
+    #     _, dcf = compute_bayes_risk_binary(pred_lab, LTE, pT, Cfn, Cfp)
+    #     mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
         # x.append(l)
         # ydcf.append(dcf)
         # ymindcf.append(mindcf)
@@ -376,7 +377,98 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA):
     print(f"\u03BB: {lamd:.0e} - accuracyLogReg: {accuracyLogReg * 100:.2f}% - DCF {dcf:.3f} - minDCF {mindcf:.3f}")
     
 
+    ########################################################################################################################
+    # SVM
 
+    # DTR = DTR - compute_mu_C(DTR)[0] # cetering data
+    # DTE = DTE - compute_mu_C(DTR)[0] # cetering data
+    # x, ydcf, ymindcf = [], [], []
+    # pT, Cfn, Cfp = 0.1, 1, 1
+    # for K in np.linspace(1, 10, 1):
+    #     for C in np.logspace(-5, 0, 11):
+    #         w, b, res = train_dual_SVM_linear(DTR, LTR, C, K)
+    #         SVAL = (vrow(w) @ DTE + b).ravel()
+    #         PVAL = (SVAL > 0) * 1
+    #         acc, err = np.mean(PVAL == LTE), np.mean(PVAL != LTE)
+    #         mindcf, _ = compute_minDCF_binary(SVAL, LTE, pT, Cfn, Cfp)
+    #         _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
+    #         print(f"K: {K:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}")
+    #         x.append(C)
+    #         ydcf.append(actdcf)
+    #         ymindcf.append(mindcf)
+    # plt.plot(x, ydcf, label='actDCF')
+    # plt.plot(x, ymindcf, label='minDCF')
+    # plt.xscale('log', base=10)
+    # plt.xlabel('C')
+    # plt.ylabel('DCF')
+    # plt.legend()
+    # plt.title('Linear SVM - actDCF and minDCF')
+    # plt.show()
+    # plt.savefig('latex/images/linear_svm_plot_C_dcf.pdf', format='pdf')
+
+
+    ########################################################################################################################
+    # SVM Polynomial Kernel
+
+    # pT, Cfn, Cfp = 0.1, 1, 1
+    # x, ydcf, ymindcf = [], [], []
+    # pT, Cfn, Cfp = 0.1, 1, 1
+    # for eps in np.linspace(1,10,1):
+    #     for C in np.logspace(-5, 0, 11):
+    #         fScore, _ = train_dual_SVM_kernel(DTR, LTR, C, polynomialKernel(4, 1), eps)
+    #         SVAL = fScore(DTE)
+    #         PVAL = (SVAL > 0) * 1
+    #         acc, err = np.mean(PVAL == LTE), np.mean(PVAL != LTE)
+    #         mindcf, _ = compute_minDCF_binary(SVAL, LTE, pT, Cfn, Cfp)
+    #         _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
+    #         print(f"eps: {eps:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}")
+    #         x.append(C)
+    #         ydcf.append(actdcf)
+    #         ymindcf.append(mindcf)
+    # plt.plot(x, ydcf, label='actDCF')
+    # plt.plot(x, ymindcf, label='minDCF')
+    # plt.xscale('log', base=10)
+    # plt.xlabel('C')
+    # plt.ylabel('DCF')
+    # plt.legend()
+    # plt.title('Polynomial kernel SVM - actDCF and minDCF')
+    # # plt.show()
+    # plt.savefig('latex/images/poly4_svm_plot_C_dcf.pdf', format='pdf')
+
+
+    ########################################################################################################################
+    # SVM RBF Kernel
+
+    pT, Cfn, Cfp = 0.1, 1, 1
+    x, ydcf, ymindcf = [], [], []
+    pT, Cfn, Cfp = 0.1, 1, 1
+    i = -4
+    colors = ['b', 'g', 'r', 'c']
+    for g in [np.exp(-4), np.exp(-3), np.exp(-2), np.exp(-1)]:
+        for C in np.logspace(-3, 2, 11):
+            fScore, _ = train_dual_SVM_kernel(DTR, LTR, C, rbfKernel(g), 1)
+            SVAL = fScore(DTE)
+            PVAL = (SVAL > 0) * 1
+            acc, err = np.mean(PVAL == LTE), np.mean(PVAL != LTE)
+            mindcf, _ = compute_minDCF_binary(SVAL, LTE, pT, Cfn, Cfp)
+            _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
+            print(f"gam: {g:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}")
+            x.append(C)
+            ydcf.append(actdcf)
+            ymindcf.append(mindcf)
+        plt.plot(x, ydcf, label=f'actDCF_e{i}', color=colors[i+4])
+        plt.plot(x, ymindcf, label=f'minDCF_e{i}', linestyle='dashed', color=colors[i+4])
+        i += 1
+        x.clear()
+        ydcf.clear()
+        ymindcf.clear()
+    plt.xscale('log', base=10)
+    plt.xlabel('C')
+    plt.ylabel('DCF')
+    plt.legend()
+    plt.title('RBF kernel SVM - actDCF and minDCF')
+    # plt.show()
+    plt.savefig('latex/images/rbf_svm_plot_C_dcf.pdf', format='pdf')
 
 
 

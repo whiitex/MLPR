@@ -13,11 +13,12 @@ def predict_optimal_Bayes_risk(llr, pT, Cfn, Cfp):
 def compute_confusion_matrix(predictedLabels, labels, nClasses=2):
     M = np.zeros((nClasses, nClasses))
     for i in range(len(labels)):
-        M[predictedLabels[i], labels[i]] += 1
+        M[int(predictedLabels[i]), int(labels[i])] += 1
     return M
 
 # Compute both DCFu and DCF
-def compute_bayes_risk_binary(predictedLabels, labels, prior, Cfn, Cfp):
+def compute_bayes_risk_binary(llr, labels, prior, Cfn, Cfp):
+    predictedLabels = predict_optimal_Bayes_risk(llr, prior, Cfn, Cfp)
     M = compute_confusion_matrix(predictedLabels, labels, 2)
     Pfn = M[0,1] / (M[0,1] + M[1,1])
     Pfp = M[1,0] / (M[1,0] + M[0,0])
