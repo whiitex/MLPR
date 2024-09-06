@@ -35,7 +35,7 @@ def main():
     pT, Cfn, Cfp = 0.5, 1, 1
     pred_lab = predict_optimal_Bayes_risk(llr, pT, Cfn, Cfp)
     cf = compute_confusion_matrix(pred_lab, labels)
-    DCFu, DCF = compute_bayes_risk_binary(pred_lab, labels, pT, Cfn, Cfp)
+    DCFu, DCF = compute_bayes_risk_binary(llr, labels, pT, Cfn, Cfp)
     # print(cf)
     print(f'{DCFu:.3f}, {DCF:.3f}')
 
@@ -49,7 +49,7 @@ def main():
     labels = np.load('../data_et_checks/data7/commedia_labels_infpar.npy')
     
     # pT, Cfn, Cfp = 0.5, 1, 1
-    DCFmin, thmin = compute_minDCF_binary(pred_lab, labels, pT, Cfn, Cfp)
+    DCFmin, thmin = compute_minDCF_binary(llr, labels, pT, Cfn, Cfp)
     print(f'DCFmin: {DCFmin:.3f}, thmin: {thmin:.3f}')
     print(f'Calibartion loss: {DCF - DCFmin:.3f}')
     
