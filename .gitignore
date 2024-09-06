@@ -1,5 +1,8 @@
+.gitignore
 __pycache__
 .pyc
 /solutions
 /latex
 /img
+/test.py
+test
