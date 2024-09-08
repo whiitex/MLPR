@@ -9,6 +9,7 @@ from src.mlpr_functions.MVG import *
 from src.mlpr_functions.BayesRisk import *
 from src.mlpr_functions.LogisticRegression import *
 from src.mlpr_functions.SVM import *
+from src.mlpr_functions.GMM import *
 
 
 def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
@@ -471,6 +472,34 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # plt.title('RBF kernel SVM - actDCF and minDCF')
     # plt.show()
     # plt.savefig('latex/images/rbf_svm_plot_C_dcf.pdf', format='pdf')
+
+
+
+    ########################################################################################################################
+    # GMM
+
+    # print()
+    # pT, Cfn, Cfp = 0.1, 1, 1
+    # for func in ['full', 'diagonal', 'tied']:
+    #     for cl1 in [1,2,4,8,16,32]:
+    #         for cl2 in [1,2,4,8,16,32]:
+    #             try:
+    #                 gmm0 = train_GMM_LBG_EM(DTR[:, LTR==0], cl1, covType=func, verbose=False)
+    #                 gmm1 = train_GMM_LBG_EM(DTR[:, LTR==1], cl2, covType=func, verbose=False)
+    #                 llr = classiy_GMM_binary(DTE, gmm0, gmm1, pT)
+    #                 SVAL = (llr > 0) * 1
+    #                 acc, err = np.mean(SVAL == LTE), 1 - np.mean(SVAL == LTE)
+    #                 _, actdcf = compute_bayes_risk_binary(llr, LTE, pT, Cfn, Cfp)
+    #                 mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
+    #                 print(f'comp: [{cl1}, {cl2}] \t- func: {func[:4]} - acc: {acc * 100:.2f}% - dcf: {actdcf:.3f}, mindcf: {mindcf:.3f}')
+    #             except: 
+    #                 print(f'error comp: [{cl1}, {cl2}]')
+    #                 continue
+
+
+
+    ########################################################################################################################
+
 
 
 

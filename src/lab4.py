@@ -9,10 +9,10 @@ def main():
     #####################################################
     # Plot of the gaussian multivariate model
 
-    plt.figure()
     XPlot = np.linspace(-8, 12, 1000)
     m = np.ones((1,1)) * 1.0
     C = np.ones((1,1)) * 2.0
+    # plt.figure()
     # plt.plot(XPlot.ravel(), np.exp(logpdf_GAU_ND(XPlot.reshape(1,1000), m, C).ravel()))
     # plt.show()
 
