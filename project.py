@@ -13,7 +13,8 @@ from src.mlpr_functions.GMM import *
 
 
 def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
-    D, L = load_data('./trainData.txt')
+    D, L = load_data('data_et_checks/trainData.txt')
+    DEVAL, LEVAL = load_data('data_et_checks/evalData.txt')
     classes = ['Counterfeit', 'Genuine']
     
     DM = D - compute_mu_C(D)[0]
@@ -151,6 +152,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     ########################################################################################################################
     # MVG model classification
 
+    plt.figure(figsize=(8,6), tight_layout=True)
     pT, Cfn, Cfp = 0.1, 1, 1
     llr = binaryMVG("accuracyMVG", DTR, LTR, DTE, LTE, classes, pT)
 
@@ -160,6 +162,9 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}\n')
 
+    # x, y, z = plot_Bayes_errorXXX(llr, LTE, -4, 4, 100)
+    # plt.plot(x, y, label='MVG DCF', color='r')
+    # plt.plot(x, z, label='MVG minDCF', color='r', linestyle='dashed')
 
 
 
@@ -173,6 +178,10 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}\n')
+
+    # x, y, z = plot_Bayes_errorXXX(llr, LTE, -4, 4, 100)
+    # plt.plot(x, y, label='Tied DCF', color='g')
+    # plt.plot(x, z, label='Tied minDCF', color='g', linestyle='dashed')
 
  
 
@@ -188,6 +197,21 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}')
+
+    # x, y, z = plot_Bayes_errorXXX(llr, LTE, -4, 4, 100)
+    # plt.plot(x, y, label='Tied DCF', color='b')
+    # plt.plot(x, z, label='Tied minDCF', color='b', linestyle='dashed')
+
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # plt.xlim(-4, 4)
+    # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--')
+    # plt.axvline(x=-2.1972, color='black', linestyle='--')
+    # plt.axvline(x=0, color='black', linestyle='--')
+    # plt.legend()
+    # plt.savefig('latex/images/MVG_bayesdecision.pdf', format='pdf')
+
 
 
     ########################################################################################################################
@@ -205,6 +229,8 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # print(np.round(PCS0, 3))
     # print("\nPearson's correlation coefficient class 1:")
     # print(np.round(PCS1, 3))
+
+
 
     ########################################################################################################################
     # MVG using only first 4 features
@@ -274,7 +300,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     _, dcf = compute_bayes_risk_binary(sValLlr, LTE, pT, Cfn, Cfp)
     mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
 
-    print(f"\u03BB: {lamd:.0e} - accuracyLogReg: {accuracyLogReg * 100:.2f}% - DCF {dcf:.3f} - minDCF {mindcf:.3f}")
+    print(f"LinearLR - \u03BB: {lamd:.0e} - accuracyLogReg: {accuracyLogReg * 100:.2f}% - DCF {dcf:.3f} - minDCF {mindcf:.3f}")
 
 
 
@@ -366,18 +392,21 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # plt.savefig('latex/images/quadlogreg_plot_dcf_lambda.pdf', format='pdf')
 
 
+    # Quadratic Logistic Regression
     w, b = trainQuadraticLogRegBinary(DTR, LTR, lamd)
     phi_DTE = phi_x(DTE)
     sVal = w.T @ phi_DTE + b
     pEmp = (LTR == 1).sum() / LTR.size
     sValLlr = sVal - np.log(pEmp / (1-pEmp))
-    RES = (sVal > 0) * 1
-    accuracyLogReg = np.mean(RES == LTE)
-    # errorLogReg = 1 - accuracyLogReg
+    RES = (sValLlr > 0) * 1
+    accuracyLogReg, errorLogReg = np.mean(RES == LTE), 1 - np.mean(RES == LTE)
     _, dcf = compute_bayes_risk_binary(sValLlr, LTE, pT, Cfn, Cfp)
     mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
 
-    print(f"\u03BB: {lamd:.0e} - accuracyLogReg: {accuracyLogReg * 100:.2f}% - DCF {dcf:.3f} - minDCF {mindcf:.3f}")
+    print(f"QuadLR - \u03BB: {lamd:.0e} - accuracyLogReg: {accuracyLogReg * 100:.2f}% - DCF {dcf:.3f} - minDCF {mindcf:.3f}\n")
+
+    # llrQuadraticLogReg = sValLlr
+    # llrEvalQuadraticLogReg = w.T @ phi_x(DEVAL) + b - pEmp
     
 
     ########################################################################################################################
@@ -413,7 +442,6 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     ########################################################################################################################
     # SVM Polynomial Kernel
 
-    # pT, Cfn, Cfp = 0.1, 1, 1
     # x, ydcf, ymindcf = [], [], []
     # pT, Cfn, Cfp = 0.1, 1, 1
     # for eps in np.linspace(1,10,1):
@@ -437,6 +465,19 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # plt.title('Polynomial kernel SVM - actDCF and minDCF')
     # # plt.show()
     # plt.savefig('latex/images/poly4_svm_plot_C_dcf.pdf', format='pdf')
+
+    # SVM Polynomial
+    # deg, K, C = 4, 1.0, 3.16e-3
+    # fScore, _ = train_dual_SVM_kernel(DTR, LTR, C, polynomialKernel(deg, 1), K)
+    # SVAL = fScore(DTE)
+    # PVAL = (SVAL > 0) * 1
+    # acc, err = np.mean(PVAL == LTE), np.mean(PVAL != LTE)
+    # mindcf, _ = compute_minDCF_binary(SVAL, LTE, pT, Cfn, Cfp)
+    # _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
+    # print(f"eps: {K:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}")
+
+    # # llrPoly4SVM = SVAL
+    # llrEvalPoly4SVM = fScore(DEVAL)
 
 
     ########################################################################################################################
@@ -474,11 +515,24 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # plt.savefig('latex/images/rbf_svm_plot_C_dcf.pdf', format='pdf')
 
 
+    # SVM RBF
+    # g, C = np.exp(-2), 3.16e1
+    # fScore, _ = train_dual_SVM_kernel(DTR, LTR, C, rbfKernel(g), 1)
+    # SVAL = fScore(DTE)
+    # PVAL = (SVAL > 0) * 1
+    # acc, err = np.mean(PVAL == LTE), np.mean(PVAL != LTE)
+    # mindcf, _ = compute_minDCF_binary(SVAL, LTE, pT, Cfn, Cfp)
+    # _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
+    # print(f"gam: {g:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}\n")
+
+    # llrRBFSVM = SVAL
+    # llrEvalRBFSVM = fScore(DEVAL)
+
+
 
     ########################################################################################################################
     # GMM
 
-    # print()
     # pT, Cfn, Cfp = 0.1, 1, 1
     # for func in ['full', 'diagonal', 'tied']:
     #     for cl1 in [1,2,4,8,16,32]:
@@ -497,10 +551,256 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     #                 continue
 
 
+    # GMM diagonal
+    # cl1, cl2, func = 4, 16, 'diagonal'
+    # gmm0 = train_GMM_LBG_EM(DTR[:, LTR==0], cl1, covType=func, verbose=False)
+    # gmm1 = train_GMM_LBG_EM(DTR[:, LTR==1], cl2, covType=func, verbose=False)
+    # llr = classiy_GMM_binary(DTE, gmm0, gmm1, pT)
+    # SVAL = (llr > 0) * 1
+    # acc, err = np.mean(SVAL == LTE), 1 - np.mean(SVAL == LTE)
+    # _, actdcf = compute_bayes_risk_binary(llr, LTE, pT, Cfn, Cfp)
+    # mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
+    # print(f'comp: [{cl1}, {cl2}] \t- func: {func[:4]} - acc: {acc * 100:.2f}% - dcf: {actdcf:.3f}, mindcf: {mindcf:.3f}')
+    
+    # llrGMMdiagonal = llr
+    # llrEvalGMMdiagonal = classiy_GMM_binary(DEVAL, gmm0, gmm1, pT)
+
 
     ########################################################################################################################
+    # Model comparison on different application
+
+    # x,y,z = plot_Bayes_errorXXX(llrQuadraticLogReg, LTE, -4, 4, 50)
+    # plt.plot(x, y, label='LogReg2 DCF', color='r')
+    # plt.plot(x, z, label='LogReg2 minDCF', color='r', linestyle='dashed')
+
+    # x,y,z = plot_Bayes_errorXXX(llrPoly4SVM, LTE, -4, 4, 50)
+    # plt.plot(x, y, label='PolySVM4 DCF', color='b')
+    # plt.plot(x, z, label='PolySVM4 minDCF', color='b', linestyle='dashed')
+
+    # x,y,z = plot_Bayes_errorXXX(llrRBFSVM, LTE, -4, 4, 50)
+    # plt.plot(x, y, label='RBFSVM DCF', color='m')
+    # plt.plot(x, z, label='RBFSVM minDCF', color='m', linestyle='dashed')
+
+    # x,y,z = plot_Bayes_errorXXX(llrGMMdiagonal, LTE, -4, 4, 50)
+    # plt.plot(x, y, label='GMMdiag DCF', color='g')
+    # plt.plot(x, z, label='GMMdiag minDCF', color='g', linestyle='dashed')
+
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # plt.xlim(-4, 4)
+    # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--')
+    # plt.axvline(x=-2.1972, color='black', linestyle='--')
+    # plt.axvline(x=0, color='black', linestyle='--')
+    # plt.legend()
+    # plt.title(r'Best models comparison -- Bayes error')
+    # plt.show()
+    # # plt.savefig('latex/images/best_model_bayes_error.pdf', format='pdf')
 
 
+    ########################################################################################################################
+    # LLR models saving
+
+    # np.save('models/llrQuadraticLogReg.npy', llrQuadraticLogReg)
+    # np.save('models/llrPoly4SVM.npy', llrPoly4SVM)
+    # np.save('models/llrRBFSVM.npy', llrRBFSVM)
+    # np.save('models/llrGMMdiagonal.npy', llrGMMdiagonal)
+
+    # np.save('models/llrEvalQuadraticLogReg.npy', llrEvalQuadraticLogReg)
+    # np.save('models/llrEvalPoly4SVM.npy', llrEvalPoly4SVM)
+    # np.save('models/llrEvalRBFSVM.npy', llrEvalRBFSVM)
+    # np.save('models/llrEvalGMMdiagonal.npy', llrEvalGMMdiagonal)
+
+    scoresQuadLogReg = np.load('models/llrQuadraticLogReg.npy')
+    scoresPoly4SVM = np.load('models/llrPoly4SVM.npy')
+    scoresRBFSVM = np.load('models/llrRBFSVM.npy')
+    scoresGMMdiag = np.load('models/llrGMMdiagonal.npy')
+
+    scoresEvalQuadLogReg = np.load('models/llrEvalQuadraticLogReg.npy')
+    scoresEvalPoly4SVM = np.load('models/llrEvalPoly4SVM.npy')
+    scoresEvalRBFSVM = np.load('models/llrEvalRBFSVM.npy')
+    scoresEvalGMMdiag = np.load('models/llrEvalGMMdiagonal.npy')
+
+
+    ########################################################################################################################
+    # K-fold cross validation on GMM diag
+
+    pT, Cfn, Cfp = 0.1, 1, 1
+
+    KFOLD = 10
+
+    # K-fold on validation set
+    print("K-fold on validation set")
+    colors = ['tab:orange', 'tab:green', 'tab:blue']
+    funcs = ['SVMpoly4', 'SVMRBF', 'GMMdiag']
+    a = 0
+    for score in [scoresQuadLogReg, scoresPoly4SVM, scoresRBFSVM, scoresGMMdiag]:
+        folds, foldlab, SCAL, LCAL = [], [], [], []
+        for i in range(KFOLD): 
+            folds.append(score[i::KFOLD])
+            foldlab.append(LTE[i::KFOLD])
+
+        for i in range(KFOLD):
+            train = np.hstack([folds[j] for j in range(KFOLD) if j != i])
+            trainlab = np.hstack([foldlab[j] for j in range(KFOLD) if j != i])
+            LCAL.append(foldlab[i])
+
+            w, b = trainWeightedLogRegBinary(vrow(train), trainlab, 0, pT)
+            res = w.T @ vrow(folds[i]) + b - np.log(pT / (1-pT))
+            SCAL.append(res)
+        
+        
+        SCAL = np.hstack(SCAL)
+        LCAL = np.hstack(LCAL)
+        res = (SCAL > 0) * 1
+        acc = np.mean(res == LCAL)
+        _, dcf = compute_bayes_risk_binary(SCAL, LCAL, pT, Cfn, Cfp)
+        mindcf, _ = compute_minDCF_binary(SCAL, LCAL, pT, Cfn, Cfp)
+        print(f"Accuracy: {acc * 100:.2f}% - DCF: {dcf:.3f} - minDCF: {mindcf:.3f}")
+
+    #     x, y, z = plot_Bayes_errorXXX(SCAL, LCAL, -3.8, 3.8, 100)
+    #     plt.plot(x, y, label=f'{funcs[a]} cal actDCF', color=colors[a])
+    #     plt.plot(x, z, label=f'{funcs[a]} minDCF', color=colors[a], linestyle='dashed')
+    #     x, y, _ = plot_Bayes_errorXXX(folds[i], foldlab[i], -3.8, 3.8, 100)
+    #     plt.plot(x, y, label=f'{funcs[a]} raw actDCF', color=colors[a], linestyle='dotted')
+    #     a += 1
+    
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # # plt.xlim(-4, 4)
+    # # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=-2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=0, color='black', linestyle='--', linewidth=1)
+    # plt.legend()
+    # plt.title(r'Calibrated models comparison -- Bayes error')
+    # plt.savefig('latex/images/calibrated_bayes_error_best_models_va.pdf', format='pdf')
+    # plt.show()
+
+    
+    # K-fold on evaluation set
+    print("\nK-fold on evaluation set")
+    for score, evalscore in [(scoresQuadLogReg, scoresEvalQuadLogReg), (scoresPoly4SVM, scoresEvalPoly4SVM), (scoresRBFSVM, scoresEvalRBFSVM), (scoresGMMdiag, scoresEvalGMMdiag)]:
+        
+        w, b = trainWeightedLogRegBinary(vrow(score), LTE, 0, 0.1)
+        res = w.T @ vrow(evalscore) + b - np.log(pT / (1-pT))
+        _, dcf = compute_bayes_risk_binary(res, LEVAL, pT, Cfn, Cfp)
+        mindcf, _ = compute_minDCF_binary(res, LEVAL, pT, Cfn, Cfp)
+        res = (res > 0) * 1
+        acc = np.mean(res == LEVAL)
+        print(f"Accuracy: {acc * 100:.2f}% - DCF: {dcf:.3f} - minDCF: {mindcf:.3f}")
+
+    # Bayes error plot of calibrated models
+    # w, b = trainWeightedLogRegBinary(vrow(scoresGMMdiag), LTE, 0, pT)
+    # res = w.T @ vrow(scoresEvalGMMdiag) + b - np.log(pT / (1-pT))
+    # x, y, z = plot_Bayes_errorXXX(res, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='GMMdiag cal actDCF', color='tab:blue')
+    # plt.plot(x, z, label='GMMdiag minDCF', color='tab:blue', linestyle='dashed')
+    # x, y, _ = plot_Bayes_errorXXX(scoresEvalGMMdiag, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='GMMdiag raw actDCF', color='tab:blue', linestyle='dotted')
+    
+    # w, b = trainWeightedLogRegBinary(vrow(scoresPoly4SVM), LTE, 0, pT)
+    # res = w.T @ vrow(scoresEvalPoly4SVM) + b - np.log(pT / (1-pT))
+    # x, y, z = plot_Bayes_errorXXX(res, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='SVMpoly4 cal actDCF', color='tab:orange')
+    # plt.plot(x, z, label='SVMpoly4 minDCF', color='tab:orange', linestyle='dashed')
+    # x, y, _ = plot_Bayes_errorXXX(scoresEvalPoly4SVM, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='SVMpoly4 raw actDCF', color='tab:orange', linestyle='dotted')
+
+    # w, b = trainWeightedLogRegBinary(vrow(scoresRBFSVM), LTE, 0, pT)
+    # res = w.T @ vrow(scoresEvalRBFSVM) + b - np.log(pT / (1-pT))
+    # x, y, z = plot_Bayes_errorXXX(res, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='RBFSVM cal actDCF', color='tab:green')
+    # plt.plot(x, z, label='RBFSVM minDCF', color='tab:green', linestyle='dashed')
+    # x, y, _ = plot_Bayes_errorXXX(scoresEvalRBFSVM, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='RBFSVM raw actDCF', color='tab:green', linestyle='dotted')
+
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # # plt.xlim(-4, 4)
+    # # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=-2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=0, color='black', linestyle='--', linewidth=1)
+    # plt.legend()
+    # plt.title(r'Calibrated models comparison -- Bayes error')
+    # # plt.show()
+    # plt.savefig('latex/images/calibrated_bayes_error_best_models_ev.pdf', format='pdf')
+
+
+
+    ########################################################################################################################
+    # Fusion
+
+    print('\nFusion on validation set')
+    score = np.vstack([scoresQuadLogReg, scoresRBFSVM, scoresGMMdiag])
+    folds, foldlab, SCAL, LCAL = [], [], [], []
+    for i in range(KFOLD): 
+        folds.append(score[:, i::KFOLD])
+        foldlab.append(LTE[i::KFOLD])
+
+    for i in range(KFOLD):
+        train = np.hstack([folds[j] for j in range(KFOLD) if j != i])
+        trainlab = np.hstack([foldlab[j] for j in range(KFOLD) if j != i])
+        LCAL.append(foldlab[i])
+
+        w, b = trainWeightedLogRegBinary(train, trainlab, 0, pT)
+        res = w.T @ folds[i] + b - np.log(pT / (1-pT))
+        SCAL.append(res)
+    
+    
+    SCAL = np.hstack(SCAL)
+    LCAL = np.hstack(LCAL)
+    res = (SCAL > 0) * 1
+    acc = np.mean(res == LCAL)
+    _, dcf = compute_bayes_risk_binary(SCAL, LCAL, pT, Cfn, Cfp)
+    mindcf, _ = compute_minDCF_binary(SCAL, LCAL, pT, Cfn, Cfp)
+    print(f"Accuracy: {acc * 100:.2f}% - DCF: {dcf:.3f} - minDCF: {mindcf:.3f}")
+
+    # x, y, z = plot_Bayes_errorXXX(SCAL, LCAL, -4, 4, 100)
+    # plt.plot(x, y, label='Fused actDCF', color='tab:blue')
+    # plt.plot(x, z, label='Fused minDCF', color='tab:blue', linestyle='dashed')
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # plt.xlim(-4, 4)
+    # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=-2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=0, color='black', linestyle='--', linewidth=1)
+    # plt.legend()
+    # plt.title(r'Fused models comparison -- Bayes error')
+    # # plt.show()
+    # plt.savefig('latex/images/fusion_bayes_error_best_models_va.pdf', format='pdf')
+
+
+
+    # Fusion on evaluation set
+    scores = np.vstack([scoresQuadLogReg, scoresRBFSVM, scoresGMMdiag])
+    scoresEval = np.vstack([scoresEvalQuadLogReg, scoresEvalRBFSVM, scoresEvalGMMdiag])
+
+    print('\nFusion on evaluation set')
+    w, b = trainWeightedLogRegBinary(scores, LTE, 0, pT)
+    res = w.T @ scoresEval + b - np.log(pT / (1-pT))
+    _, dcf = compute_bayes_risk_binary(res, LEVAL, pT, Cfn, Cfp)
+    mindcf, _ = compute_minDCF_binary(res, LEVAL, pT, Cfn, Cfp)
+    A = (res > 0) * 1
+    acc = np.mean(A == LEVAL)
+    print(f"Accuracy: {acc * 100:.2f}% - DCF: {dcf:.3f} - minDCF: {mindcf:.3f}")
+
+    # x, y, z = plot_Bayes_errorXXX(res, LEVAL, -4, 4, 100)
+    # plt.plot(x, y, label='Fused actDCF', color='tab:blue')
+    # plt.plot(x, z, label='Fused minDCF', color='tab:blue', linestyle='dashed')
+    # plt.xlabel(r"$\log \frac{\tilde{\pi}}{1+-\tilde{\pi}}$", fontsize=12)
+    # plt.ylabel("DCF", fontsize=12)
+    # # plt.xlim(-4, 4)
+    # # plt.ylim(0, 1.19)
+    # plt.axvline(x=2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=-2.1972, color='black', linestyle='--', linewidth=1)
+    # plt.axvline(x=0, color='black', linestyle='--', linewidth=1)
+    # plt.legend()
+    # plt.title(r'Fused models comparison -- Bayes error')
+    # # plt.show()
+    # plt.savefig('latex/images/fusion_bayes_error_best_models_ev.pdf', format='pdf')
 
 
 

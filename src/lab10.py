@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from mlpr_functions.data_management import *
 from mlpr_functions.GMM import *
 from mlpr_functions.BayesRisk import *
-from mlpr_functions.BayesRisk import *
 import json
 
 

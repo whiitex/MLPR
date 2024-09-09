@@ -88,32 +88,30 @@ def plot_ROC_curve(llr, labels):
     plt.show()
 
 def plot_Bayes_error(llr, labels, lrange, rrange, npoints = 30):
-        xplot, yplot, yplotmin = [], [], []
-        for i in np.linspace(lrange, rrange, npoints):
-            effP = 1 / (1 + np.exp(-i))
-            pred_lab = predict_labels_binary(llr, effP)
-            _, dcf = compute_bayes_risk_binary(pred_lab, labels, effP, 1, 1)
-            dcfmin, _ = compute_minDCF_binary(llr, labels, effP, 1, 1)
-            xplot.append(i)
-            yplot.append(dcf)
-            yplotmin.append(dcfmin)
-        
-        plt.plot(xplot, yplot, linewidth=2, color='blue', label='DCF')
-        plt.plot(xplot, yplotmin, linewidth=2, color='red', label='min DCF')
-        plt.xlim(lrange, rrange)
-        plt.ylim(0, (rrange - lrange) / 2.5)
-        plt.legend()
-        plt.show()
+    xplot, yplot, yplotmin = [], [], []
+    for i in np.linspace(lrange, rrange, npoints):
+        effP = 1 / (1 + np.exp(-i))
+        _, dcf = compute_bayes_risk_binary(llr, labels, effP, 1, 1)
+        dcfmin, _ = compute_minDCF_binary(llr, labels, effP, 1, 1)
+        xplot.append(i)
+        yplot.append(dcf)
+        yplotmin.append(dcfmin)
+    
+    plt.plot(xplot, yplot, linewidth=2, color='blue', label='DCF')
+    plt.plot(xplot, yplotmin, linewidth=2, color='red', label='min DCF')
+    plt.xlim(lrange, rrange)
+    plt.ylim(0, 1.2)
+    plt.legend()
+    plt.show()
 
 def plot_Bayes_errorXXX(llr, labels, lrange, rrange, npoints = 30):
-        xplot, yplot, yplotmin = [], [], []
-        for i in np.linspace(lrange, rrange, npoints):
-            effP = 1 / (1 + np.exp(-i))
-            pred_lab = predict_labels_binary(llr, effP)
-            _, dcf = compute_bayes_risk_binary(pred_lab, labels, effP, 1, 1)
-            dcfmin, _ = compute_minDCF_binary(llr, labels, effP, 1, 1)
-            xplot.append(i)
-            yplot.append(dcf)
-            yplotmin.append(dcfmin)
-        
-        return xplot, yplot, yplotmin
+    xplot, yplot, yplotmin = [], [], []
+    for i in np.linspace(lrange, rrange, npoints):
+        effP = 1 / (1 + np.exp(-i))
+        _, dcf = compute_bayes_risk_binary(llr, labels, effP, 1, 1)
+        dcfmin, _ = compute_minDCF_binary(llr, labels, effP, 1, 1)
+        xplot.append(i)
+        yplot.append(dcf)
+        yplotmin.append(dcfmin)
+    
+    return xplot, yplot, yplotmin
