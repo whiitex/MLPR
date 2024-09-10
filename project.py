@@ -156,8 +156,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     pT, Cfn, Cfp = 0.1, 1, 1
     llr = binaryMVG("accuracyMVG", DTR, LTR, DTE, LTE, classes, pT)
 
-    predicted_labels = predict_optimal_Bayes_risk(llr, pT, Cfn, Cfp)
-    _, dcf = compute_bayes_risk_binary(predicted_labels, LTE, pT, Cfn, Cfp)
+    _, dcf = compute_bayes_risk_binary(llr, LTE, pT, Cfn, Cfp)
     mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}\n')
@@ -173,8 +172,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
 
     llr = binaryMVGTied("accuracyMVG_Tied", DTR, LTR, DTE, LTE, classes, pT=pT)
 
-    predicted_labels = predict_optimal_Bayes_risk(llr, pT, Cfn, Cfp)
-    _, dcf = compute_bayes_risk_binary(predicted_labels, LTE, pT, Cfn, Cfp)
+    _, dcf = compute_bayes_risk_binary(llr, LTE, pT, Cfn, Cfp)
     mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}\n')
@@ -192,8 +190,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     
     llr = binaryMVGnaive("accuracyMVG_Naive", DTR, LTR, DTE, LTE, classes)
 
-    predicted_labels = predict_optimal_Bayes_risk(llr, pT, Cfn, Cfp)
-    _, dcf = compute_bayes_risk_binary(predicted_labels, LTE, pT, Cfn, Cfp)
+    _, dcf = compute_bayes_risk_binary(llr, LTE, pT, Cfn, Cfp)
     mindcf, _ = compute_minDCF_binary(llr, LTE, pT, Cfn, Cfp)
     # plot_Bayes_error(llr, LTE, -4, 4, 100)
     print(f'-> DCF: {dcf:.3f}, DCFmin: {mindcf:.3f}')
@@ -271,8 +268,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     #     if minErrLogReg is None or errorLogReg < minErrLogReg:
     #         minErrLogReg = errorLogReg
     #         lamd = l
-    #     pred_lab = predict_optimal_Bayes_risk(sValLlr, pT, Cfn, Cfp)
-    #     _, dcf = compute_bayes_risk_binary(pred_lab, LTE, pT, Cfn, Cfp)
+    #     _, dcf = compute_bayes_risk_binary(sValLlr, LTE, pT, Cfn, Cfp)
     #     mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
     #     x.append(l)
     #     ydcf.append(dcf)
@@ -324,8 +320,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     #         if minErrLogReg is None or 1 - accuracyLogReg < minErrLogReg:
     #             minErrLogReg = 1 - accuracyLogReg
     #             lamd, prior = l, p
-    #         pred_lab = predict_optimal_Bayes_risk(sValLlr, pT, Cfn, Cfp)
-    #         _, dcf = compute_bayes_risk_binary(pred_lab, LTE, pT, Cfn, Cfp)
+    #         _, dcf = compute_bayes_risk_binary(sValLlr, LTE, pT, Cfn, Cfp)
     #         mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
     #         x.append(l)
     #         ydcf.append(dcf)
@@ -373,8 +368,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     #     if minErrLogReg is None or errorLogReg < minErrLogReg:
     #         minErrLogReg = errorLogReg
     #         lamd = l
-    #     pred_lab = predict_optimal_Bayes_risk(sValLlr, pT, Cfn, Cfp)
-    #     _, dcf = compute_bayes_risk_binary(pred_lab, LTE, pT, Cfn, Cfp)
+    #     _, dcf = compute_bayes_risk_binary(sValLlr, LTE, pT, Cfn, Cfp)
     #     mindcf, _ = compute_minDCF_binary(sValLlr, LTE, pT, Cfn, Cfp)
         # x.append(l)
         # ydcf.append(dcf)
