@@ -16,8 +16,8 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     classes = ['Counterfeit', 'Genuine']
 
     if center:
-        DTR = DTR - compute_mu_C(DTR)[0] # cetering data
-        DTE = DTE - compute_mu_C(DTR)[0] # cetering data
+        DTR = DTR - compute_mu_C(DTR)[0] # centering data
+        DTE = DTE - compute_mu_C(DTR)[0] # centering data
     
     print(f"m_PCA: {m_PCA}, applyPCA: {applyPCA}")
     P_PCA, DTR_PCA = PCA(DTR, m_PCA)

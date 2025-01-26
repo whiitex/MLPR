@@ -13,8 +13,8 @@ def main(m_PCA, m_LDA, center: bool):
 
 
     if center:
-        DTR = DTR - compute_mu_C(DTR)[0] # cetering data
-        DTE = DTE - compute_mu_C(DTR)[0] # cetering data
+        DTR = DTR - compute_mu_C(DTR)[0] # centering data
+        DTE = DTE - compute_mu_C(DTR)[0] # centering data
     
     #########################################################################
     # PCA - Principal Component Analysis
