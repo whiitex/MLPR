@@ -55,6 +55,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
         DTR = apply_pca(P_PCA, DTR)
         DTE = apply_pca(P_PCA, DTE)
 
+
     # visualize_pairwise(DTR_PCA, LTR, [0,1], classes, a=0.1, bins=40)
 
     # fig, axs = plt.subplots(2, 3, figsize=(16,9))
@@ -67,7 +68,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     #         axs[i][j].legend(fontsize=8)
 
     # fig.tight_layout(pad=3)
-    # # plt.show()
+    # plt.show()
     # # plt.savefig('latex/images/PCA_6.pdf', format='pdf')
 
 
@@ -212,7 +213,6 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
 
 
     ########################################################################################################################
-    # Pearson's correlation coefficient
     # Pearson's correlation coefficient
     S0 = np.cov(DTR[:, LTR == 0])
     S1 = np.cov(DTR[:, LTR == 1])
@@ -470,7 +470,7 @@ def main(m_PCA, m_LDA, applyPCA, applyLDA, center):
     # _, actdcf = compute_bayes_risk_binary(SVAL, LTE, pT, Cfn, Cfp)
     # print(f"eps: {K:.1f} - C: {C:.2e} - Accuracy: {acc * 100:.2f}% - actDCF: {actdcf:.3f} - minDCF: {mindcf:.3f}")
 
-    # # llrPoly4SVM = SVAL
+    # llrPoly4SVM = SVAL
     # llrEvalPoly4SVM = fScore(DEVAL)
 
 
